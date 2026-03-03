@@ -1,0 +1,36 @@
+#!/bin/bash
+
+apt update
+apt upgrade -y
+
+apt install apt-transport-https curl
+mkdir -p /etc/apt/keyrings
+curl -o /etc/apt/keyrings/mariadb-keyring.pgp 'https://mariadb.org/mariadb_release_signing_key.pgp'
+
+set -euo pipefail
+
+# Target file
+SOURCE_FILE="/etc/apt/sources.list.d/mariadb.sources"
+
+# Create or overwrite the repository sources file
+sudo tee "$SOURCE_FILE" > /dev/null <<'EOF'
+# MariaDB 11.8 repository list - created 2025-08-25 18:31 UTC
+# https://mariadb.org/download/
+X-Repolib-Name: MariaDB
+Types: deb
+# deb.mariadb.org is a dynamic mirror if your preferred mirror goes offline. See https://mariadb.org/mirrorbits/ for details.
+# URIs: https://deb.mariadb.org/11.8/ubuntu
+URIs: https://mirrors.accretive-networks.net/mariadb/repo/11.8/ubuntu
+Suites: noble
+Components: main main/debug
+Signed-By: /etc/apt/keyrings/mariadb-keyring.pgp
+EOF
+
+export DEBIAN_FRONTEND=noninteractive
+apt update
+apt install -y mariadb-server
+
+apt install mariadb-client-core
+
+apt update
+apt install galera-4 mariadb-plugin-galera -y
