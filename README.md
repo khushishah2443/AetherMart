@@ -12,7 +12,7 @@ AetherMart is a data-centric e-commerce platform designed to explore how modern 
 
 The project focuses on building an analytics-ready backend and integrating semantic search using vector embeddings, while applying solid software engineering practices to ensure scalability, reliability, and extensibility.
 
-🔗 [Demo][https://www.youtube.com/playlist?list=PLKmMZLAf_mbLgWFgkR-XTutjNPdaQza_J]
+🔗 [Demo](https://www.youtube.com/playlist?list=PLKmMZLAf_mbLgWFgkR-XTutjNPdaQza_J)
 
 ---
 
