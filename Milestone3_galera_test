@@ -1,0 +1,96 @@
+#SECURITY GROUPS check karna h
+
+sudo apt update
+sudo apt install galera-4 mariadb-plugin-galera -y
+
+sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+
+##--------------
+## NODE 1
+[mariadbd]
+# Make sure this line exists and is set to 0.0.0.0
+bind-address = 0.0.0.0
+
+# --- GALERA CLUSTER SETTINGS ---
+[galera]
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+
+# Cluster connection settings (MUST be the same on all nodes)
+wsrep_cluster_address="gcomm://172.31.27.82,172.31.17.23,172.31.19.65"
+wsrep_cluster_name="aethermart_cluster"
+
+# Node-specific settings (MUST be different on each node)
+wsrep_node_address="172.31.27.82"
+wsrep_node_name="galera-node-1" # e.g., galera-node-1
+
+# Recommended settings for reliability
+binlog_format=row
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+
+
+##--------------
+## NODE 2
+
+[mariadbd]
+# Make sure this line exists and is set to 0.0.0.0
+bind-address = 0.0.0.0
+
+# --- GALERA CLUSTER SETTINGS ---
+[galera]
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+
+# Cluster connection settings (MUST be the same on all nodes)
+wsrep_cluster_address="gcomm://172.31.27.82,172.31.17.23,172.31.19.65"
+wsrep_cluster_name="aethermart_cluster"
+
+# Node-specific settings (MUST be different on each node)
+wsrep_node_address="172.31.17.23"
+wsrep_node_name="galera-node-2" # e.g., galera-node-1
+
+# Recommended settings for reliability
+binlog_format=row
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+
+
+##--------------
+## NODE 3
+
+[mariadbd]
+# Make sure this line exists and is set to 0.0.0.0
+bind-address = 0.0.0.0
+
+# --- GALERA CLUSTER SETTINGS ---
+[galera]
+wsrep_on=ON
+wsrep_provider=/usr/lib/galera/libgalera_smm.so
+
+# Cluster connection settings (MUST be the same on all nodes)
+wsrep_cluster_address="gcomm://172.31.27.82,172.31.17.23,172.31.19.65"
+wsrep_cluster_name="aethermart_cluster"
+
+# Node-specific settings (MUST be different on each node)
+wsrep_node_address="172.31.19.65"
+wsrep_node_name="galera-node-3" # e.g., galera-node-1
+
+# Recommended settings for reliability
+binlog_format=row
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+
+# Run this on Node 1 only
+sudo galera_new_cluster
+
+# Run this on Node 2
+sudo systemctl start mariadb
+
+# Run this on Node 3
+sudo systemctl start mariadb
+
+SHOW STATUS LIKE 'wsrep_cluster_size';
+
+sudo systemctl stop mariadb
+

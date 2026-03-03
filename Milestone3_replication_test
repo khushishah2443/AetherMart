@@ -1,0 +1,60 @@
+sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+
+#PRIMARY
+
+[mariadbd]
+# ... (other settings will be here already) ...
+
+# --- REPLICATION SETTINGS ---
+server_id = 1
+log-bin = /var/log/mysql/mysql-bin.log
+binlog_format = ROW
+bind-address = 0.0.0.0
+
+sudo systemctl restart mariadb
+
+CREATE USER 'replica_user'@'%' IDENTIFIED BY 'yash';
+GRANT REPLICATION SLAVE ON *.* TO 'replica_user'@'%';
+FLUSH PRIVILEGES;
+EXIT;
+
+SHOW MASTER STATUS;
+
+#You will see an output that looks something like this. COPY THIS DOWN CAREFULLY. You will need the File and Position values for every replica you set up.
+
+sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+
+# For Replica 1:
+
+[mariadbd]
+# --- REPLICATION SETTINGS ---
+server_id = 2
+bind-address = 0.0.0.0
+read_only = 1
+
+
+# For Replica 2:
+
+[mariadbd]
+# --- REPLICATION SETTINGS ---
+server_id = 3
+bind-address = 0.0.0.0
+read_only = 1
+
+# Connect to Primary and Start Replication (On a REPLICA)
+
+STOP SLAVE;
+
+CHANGE MASTER TO
+  MASTER_HOST='172.31.30.31',
+  MASTER_USER='replica_user',
+  MASTER_PASSWORD='yash',
+  MASTER_LOG_FILE='mysql-bin.000004',  -- Use the File name you recorded
+  MASTER_LOG_POS=367926;                  -- Use the Position number you recorded
+
+START SLAVE;
+
+SHOW SLAVE STATUS\G;
+
+#Slave_IO_Running: Yes
+#Slave_SQL_Running: Yes
