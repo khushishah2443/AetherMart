@@ -2,7 +2,7 @@
 
 **Data-Driven E-Commerce Platform with AI-Powered Search**
 
-*Data Engineering | Analytics | Applied AI | Scalable Software Systems*
+*Data Engineering | Analytics | Applied AI | Recommendation Systems | Scalable Software Systems*
 
 ---
 
